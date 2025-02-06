@@ -10,14 +10,19 @@ namespace task_management_system.Data
         {
         }
 
-        public DbSet<Task> Tasks { get; set; }
+        public ApplicationDbContext()
+        {
+
+        }
+
+        public DbSet<MemberTask> Tasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             // Configure the relationship between Task and IdentityUser
-            modelBuilder.Entity<Task>()
+            modelBuilder.Entity<MemberTask>()
                 .HasOne(t => t.AssignedUser)
                 .WithMany()
                 .HasForeignKey(t => t.AssignedUserId)
