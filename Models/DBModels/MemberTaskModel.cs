@@ -9,7 +9,7 @@ namespace task_management_system.Models.DBModels
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
         public string AssignedUserId { get; set; }
-        public IdentityUser AssignedUser { get; set; }
+        public IdentityUser? AssignedUser { get; set; }
         public string Status { get; set; }
     }
 }

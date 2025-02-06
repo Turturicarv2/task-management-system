@@ -34,8 +34,6 @@ public class MemberTaskRepository
 
     public void InsertMemberTask(MemberTaskModel model)
     {
-        model.Id = Convert.ToInt32(new Random());
-
         dbContext.Add(MapModelToDbObject(model));
         dbContext.SaveChanges();
     }

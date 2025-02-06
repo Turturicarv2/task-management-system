@@ -1,26 +1,41 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks;
+using task_management_system.Data;
+using task_management_system.Models.DBModels;
 
 namespace task_management_system.Controllers
 {
     public class MemberTasksController : Controller
     {
+        private MemberTaskRepository _repository;
+        private ApplicationDbContext _context;
+
+        public MemberTasksController(ApplicationDbContext dbContext)
+        {
+            _repository = new MemberTaskRepository(dbContext);
+            _context = dbContext;
+        }
+
         // GET: MemberTasksController
         public ActionResult Index()
         {
-            return View();
+            var tasks = _repository.GetAllMemberTasks();
+            return View("Index", tasks);
         }
 
         // GET: MemberTasksController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            return View("Details");
         }
 
         // GET: MemberTasksController/Create
         public ActionResult Create()
         {
-            return View();
+            ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "Id");
+            return View("Create");
         }
 
         // POST: MemberTasksController/Create
@@ -28,20 +43,26 @@ namespace task_management_system.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
-            try
+            MemberTaskModel model = new MemberTaskModel();
+            var task = TryUpdateModelAsync(model);
+
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "Id", model.AssignedUserId);
+                return View(model);
             }
-            catch
-            {
-                return View();
-            }
+
+            _repository.InsertMemberTask(model);
+
+            var tasks = _repository.GetAllMemberTasks();
+            return View("Index", tasks);
         }
 
         // GET: MemberTasksController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var task = _repository.GetMemberTaskById(id);
+            return View("Edit", task);
         }
 
         // POST: MemberTasksController/Edit/5
@@ -49,20 +70,25 @@ namespace task_management_system.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {
-            try
+            MemberTaskModel model = new MemberTaskModel();
+            var task = TryUpdateModelAsync(model);
+
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            catch
-            {
-                return View();
-            }
+
+            _repository.UpdateMemberTask(model);
+
+            var tasks = _repository.GetAllMemberTasks();
+            return View("Index", tasks);
         }
 
         // GET: MemberTasksController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var task = _repository.GetMemberTaskById(id);
+            return View("Delete", task);
         }
 
         // POST: MemberTasksController/Delete/5
@@ -70,14 +96,10 @@ namespace task_management_system.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _repository.DeleteMemberTask(_repository.GetMemberTaskById(id));
+
+            var tasks = _repository.GetAllMemberTasks();
+            return View("Index", tasks);
         }
     }
 }
