@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
@@ -31,6 +32,7 @@ namespace task_management_system.Controllers
         }
 
         // GET: MemberTasksController/Create
+        [Authorize(Roles = "TeamLeader")]
         public ActionResult Create()
         {
             ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "UserName");
@@ -40,6 +42,7 @@ namespace task_management_system.Controllers
         // POST: MemberTasksController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "TeamLeader")]
         public IActionResult Create(MemberTaskModel model)
         {
             if (!ModelState.IsValid)

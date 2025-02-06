@@ -29,6 +29,5 @@ namespace task_management_system.Data
                 .HasForeignKey(t => t.AssignedUserId)
                 .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
         }
-        public DbSet<task_management_system.Models.DBModels.MemberTaskModel> MemberTaskModel { get; set; } = default!;
     }
 }
