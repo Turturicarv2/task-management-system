@@ -21,8 +21,7 @@ namespace task_management_system.Controllers
         // GET: MemberTasksController
         public ActionResult Index()
         {
-            var tasks = _repository.GetAllMemberTasks();
-            return View("Index", tasks);
+            return ReturnToIndexPage();
         }
 
         // GET: MemberTasksController/Details/5
@@ -80,8 +79,7 @@ namespace task_management_system.Controllers
 
             _repository.UpdateMemberTask(model);
 
-            var tasks = _repository.GetAllMemberTasks();
-            return View("Index", tasks);
+            return ReturnToIndexPage();
         }
 
         // GET: MemberTasksController/Delete/5
@@ -98,7 +96,14 @@ namespace task_management_system.Controllers
         {
             _repository.DeleteMemberTask(_repository.GetMemberTaskById(id));
 
-            var tasks = _repository.GetAllMemberTasks();
+            return ReturnToIndexPage();
+        }
+
+        private ActionResult ReturnToIndexPage()
+        {
+            string currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var tasks = _repository.GetAllMemberTasks(currentUserId);
             return View("Index", tasks);
         }
     }

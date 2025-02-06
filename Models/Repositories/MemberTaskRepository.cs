@@ -15,13 +15,16 @@ public class MemberTaskRepository
         this.dbContext = dbContext;
     }
 
-    public List<MemberTaskModel> GetAllMemberTasks()
+    public List<MemberTaskModel> GetAllMemberTasks(string userId)
     {
         List<MemberTaskModel> memberTaskModels = new List<MemberTaskModel>();
 
         foreach (MemberTask task in dbContext.Tasks)
         {
-            memberTaskModels.Add(MapDbObjectToModel(task));
+            if (task.AssignedUserId == userId)
+            {
+                memberTaskModels.Add(MapDbObjectToModel(task));
+            }
         }
 
         return memberTaskModels;
