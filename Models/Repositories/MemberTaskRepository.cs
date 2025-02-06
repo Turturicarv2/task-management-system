@@ -34,7 +34,11 @@ public class MemberTaskRepository
 
     public void InsertMemberTask(MemberTaskModel model)
     {
-        dbContext.Add(MapModelToDbObject(model));
+        var dbObject = MapModelToDbObject(model);
+
+        dbObject.AssignedUser = dbContext.Users.FirstOrDefault(u => u.Id == model.AssignedUserId);
+
+        dbContext.Add(dbObject);
         dbContext.SaveChanges();
     }
 

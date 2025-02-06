@@ -34,29 +34,29 @@ namespace task_management_system.Controllers
         // GET: MemberTasksController/Create
         public ActionResult Create()
         {
-            ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "UserName");
             return View("Create");
         }
 
         // POST: MemberTasksController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public IActionResult Create(MemberTaskModel model)
         {
-            MemberTaskModel model = new MemberTaskModel();
-            var task = TryUpdateModelAsync(model);
-
             if (!ModelState.IsValid)
             {
-                ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "Id", model.AssignedUserId);
+                ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "UserName", model.AssignedUserId);
                 return View(model);
             }
 
+            // Fetch AssignedUser from DB and attach it
+            model.AssignedUser = _context.Users.FirstOrDefault(u => u.Id == model.AssignedUserId);
+
             _repository.InsertMemberTask(model);
 
-            var tasks = _repository.GetAllMemberTasks();
-            return View("Index", tasks);
+            return RedirectToAction("Index");
         }
+
 
         // GET: MemberTasksController/Edit/5
         public ActionResult Edit(int id)
