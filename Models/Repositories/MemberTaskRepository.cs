@@ -57,6 +57,8 @@ public class MemberTaskRepository
             task.AssignedUser = model.AssignedUser;
             task.AssignedUserId = model.AssignedUserId;
             task.DueDate = model.DueDate;
+
+            dbContext.SaveChanges();
         }
     }
 

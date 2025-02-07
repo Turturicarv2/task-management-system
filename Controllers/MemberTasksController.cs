@@ -28,7 +28,14 @@ namespace task_management_system.Controllers
         // GET: MemberTasksController/Details/5
         public ActionResult Details(int id)
         {
-            return View("Details");
+            var taskInfo = _repository.GetMemberTaskById(id);
+
+            if (taskInfo != null)
+            {
+                taskInfo.AssignedUser = _context.Users.FirstOrDefault(u => u.Id == taskInfo.AssignedUserId);
+            }
+
+            return View("Details", taskInfo);
         }
 
         // GET: MemberTasksController/Create
@@ -63,6 +70,7 @@ namespace task_management_system.Controllers
         // GET: MemberTasksController/Edit/5
         public ActionResult Edit(int id)
         {
+            ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "UserName");
             var task = _repository.GetMemberTaskById(id);
             return View("Edit", task);
         }
@@ -77,6 +85,7 @@ namespace task_management_system.Controllers
 
             if (!ModelState.IsValid)
             {
+                ViewData["AssignedUserId"] = new SelectList(_context.Users, "Id", "UserName");
                 return View(model);
             }
 
