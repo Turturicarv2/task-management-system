@@ -15,7 +15,7 @@ public class MemberTaskRepository
         this.dbContext = dbContext;
     }
 
-    public List<MemberTaskModel> GetAllMemberTasks(string userId)
+    public List<MemberTaskModel> GetAllMemberTasksByUserId(string userId)
     {
         List<MemberTaskModel> memberTaskModels = new List<MemberTaskModel>();
 

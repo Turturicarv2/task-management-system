@@ -86,6 +86,7 @@ namespace task_management_system.Controllers
         }
 
         // GET: MemberTasksController/Delete/5
+        [Authorize(Roles = "TeamLeader")]
         public ActionResult Delete(int id)
         {
             var task = _repository.GetMemberTaskById(id);
@@ -95,6 +96,7 @@ namespace task_management_system.Controllers
         // POST: MemberTasksController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "TeamLeader")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             _repository.DeleteMemberTask(_repository.GetMemberTaskById(id));
@@ -102,11 +104,31 @@ namespace task_management_system.Controllers
             return ReturnToIndexPage();
         }
 
+        [Authorize(Roles = "TeamLeader")]
+        public IActionResult ViewMemberTasks(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Users = new SelectList(_context.Users, "Id", "UserName");
+            var tasks = _repository.GetAllMemberTasksByUserId(userId);
+
+            if (tasks == null || !tasks.Any())
+            {
+                ViewBag.Message = "No tasks found for this user.";
+            }
+
+            return View("Index", tasks);
+        }
+
         private ActionResult ReturnToIndexPage()
         {
+            ViewBag.Users = new SelectList(_context.Users, "Id", "UserName");
             string currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-            var tasks = _repository.GetAllMemberTasks(currentUserId);
+            var tasks = _repository.GetAllMemberTasksByUserId(currentUserId);
             return View("Index", tasks);
         }
     }

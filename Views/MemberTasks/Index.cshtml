@@ -5,14 +5,22 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>My tasks</h1>
 
 @if (User.IsInRole("TeamLeader"))
 {
     <p>
         <a asp-action="Create">Create New</a>
     </p>
+
+    <form asp-action="ViewMemberTasks" method="get">
+        <label for="selectedUser">Select a User:</label>
+        <select name="userId" id="selectedUser" asp-items="ViewBag.Users" class="form-control"></select>
+        <button type="submit" class="btn btn-primary mt-2">View Tasks</button>
+    </form>
 }
+
+<h1>Tasks:</h1>
+
 <table class="table">
     <thead>
         <tr>
@@ -49,7 +57,11 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+                    @if (User.IsInRole("TeamLeader")) 
+                    { 
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> 
+                    }
             </td>
         </tr>
 }
